@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.example.model.Task;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,5 +57,34 @@ public class TaskServiceImpl implements TaskService {
             throw new RuntimeException("Задача не найдена: " + id);
         }
         taskRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Task> getTasksByPeriodAndStatus(String period, Boolean completed) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime from;
+        LocalDateTime to;
+
+        switch (period) {
+            case "today" -> {
+                from = now.toLocalDate().atStartOfDay();
+                to = from.plusDays(1);
+            }
+            case "week" -> {
+                from = now.toLocalDate().atStartOfDay();
+                to = from.plusWeeks(1);
+            }
+            case "month" -> {
+                from = now.toLocalDate().atStartOfDay();
+                to = from.plusMonths(1);
+            }
+            default -> throw new IllegalArgumentException("Unknown period: " + period);
+        }
+
+        if (completed == null) {
+            return taskRepository.findAllByDueDateBetween(from, to);
+        } else {
+            return taskRepository.findAllByDueDateBetweenAndCompleted(from, to, completed);
+        }
     }
 }

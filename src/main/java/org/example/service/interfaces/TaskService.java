@@ -34,5 +34,11 @@ public interface TaskService {
      * Удаляет задачу по идентификатору
      */
     void deleteTask(Long id);
+
+    /**
+     * Возвращает задачи за указанный период с
+     * фильтрацией по статусу выполнения
+     */
+    List<Task> getTasksByPeriodAndStatus(String period, Boolean completed);
 }
 
