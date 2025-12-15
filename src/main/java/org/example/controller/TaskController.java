@@ -64,7 +64,6 @@ public class TaskController {
         }
     }
 
-
     /**
      * Удаляет задачу по идентификатору
      */
@@ -77,4 +76,21 @@ public class TaskController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    /**
+     * Возвращает задачи за указанный период с фильтрацией по статусу выполнения
+     */
+    @GetMapping("/filter")
+    public ResponseEntity<List<Task>> getTasksByPeriodAndStatus(
+            @RequestParam String period,
+            @RequestParam(required = false) Boolean completed
+    ) {
+        try {
+            List<Task> tasks = taskService.getTasksByPeriodAndStatus(period, completed);
+            return ResponseEntity.ok(tasks);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 }
